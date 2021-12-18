@@ -9,7 +9,7 @@
             if (status === 'granted') {
                 navigator.serviceWorker.ready.then(function(registration) {
                   registration.showNotification('Vibration Sample', {
-                    body: 'Buzz! Buzz!',
+                    body: 'Notification Triggered',
                     vibrate: [200, 100, 200, 100, 200, 100, 200],
                     tag: 'vibration-sample'
                   });
@@ -73,6 +73,7 @@
         if ('serviceWorker' in navigator){
             window.addEventListener('load',()=>{
                 registerServiceWorker();
+                displayNotification();
             })
 
         if ('Notification' in window && navigator.serviceWorker) {
