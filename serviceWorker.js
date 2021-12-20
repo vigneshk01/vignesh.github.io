@@ -1,5 +1,3 @@
-
-
 var STATIC_CACHE_CONTAINER = "static_v1"
 var STATIC_FILES = [
     "/",
@@ -18,7 +16,7 @@ self.addEventListener('install', function(event){
             return cache.addAll(STATIC_FILES)
         })
     )
-})
+});
 
 
 self.addEventListener('activate', function(event){
@@ -28,9 +26,8 @@ self.addEventListener('activate', function(event){
           await self.registration.navigationPreload.enable();
         }
       })());
-    
     self.clients.claim();
-})
+});
 
 
 self.addEventListener('fetch', function(event){
@@ -39,21 +36,55 @@ self.addEventListener('fetch', function(event){
                 return response || fetch(event.request)
         })
     )
-})
+});
 
-self.addEventListener('push',event => {
-    const title = 'Yay a msg';
-    const body = 'We hav a push msg';
-    const icon = '/images/app_icon96x96.png';
-    const tag = 'simple-push-example-tag';
+
+self.addEventListener('push', function(e) {
+    var body;
+  
+    if (e.data) { 
+      body = e.data.text();
+    } else { 
+      body = 'Push message has no payload';
+    }
+  
+    var options = {
+      body: body,
+      vibrate: [100, 50, 100],
+      data: {
+        dateOfArrival: Date.now(),
+        primaryKey: 1
+      },
+      actions: [
+        {action: 'explore', title: 'Explore this new world'},
+        {action: 'close', title: 'I don\'t want any of this'},
+      ]
+    };
+    e.waitUntil(
+      self.registration.showNotification('Push Notification', options)
+    );
+});
+
+
+self.addEventListener('pushsubscriptionchange', function(event) {
+    console.log('Subscription expired');
     event.waitUntil(
-        self.registration.showNotification(title,{
-            body: body,
-            icon: icon,
-            tag: tag
-        })
-    )
-})
+      self.registration.pushManager.subscribe({ userVisibleOnly: true })
+      .then(function(subscription) {
+        console.log('Subscribed after expiration', subscription.endpoint);
+        return fetch('register', {
+          method: 'post',
+          headers: {
+            'Content-type': 'application/json'
+          },
+          body: JSON.stringify({
+            endpoint: subscription.endpoint
+          })
+        });
+      })
+    );
+});
+
 
 self.addEventListener('notificationclick', event => {
     const notification = event.notification;

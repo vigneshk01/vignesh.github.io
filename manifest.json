@@ -1,6 +1,6 @@
 {
-    "name": "Task Manager",
-    "short_name": "TaskManager",
+    "name": "PWA App",
+    "short_name": "PWA-App",
     "icons": [
       {
         "src": "/images/app_icon48x48.png",
@@ -39,7 +39,8 @@
     "orientation": "portrait-primary",
     "background_color": "#fff",
     "theme_color": "#007BFF",
-    "description": "Simple task manager implementing some of PWA's hadouken!",
+    "description": "Simple PWA App",
     "dir": "ltr",
-    "lang": "en-US"
-  }
+    "lang": "en-US",
+    "gcm_sender_id": "1085570811953"
+}

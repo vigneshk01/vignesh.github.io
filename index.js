@@ -1,5 +1,59 @@
 (function(glob, document){
     'use strict';
+    const applicationServerPublicKey = 'BOh0JrvksMFCrj1Ah7dWQIh5jLt0FXWSPM0FUUb4eXOS38bLKzXBXswhYBOnS6BopHBhZvLEZT7UQkrDLdXH-Do'
+
+    function urlBase64ToUint8Array(base64String) {
+        var padding = '='.repeat((4 - base64String.length % 4) % 4);
+        var base64 = (base64String + padding)
+            .replace(/\-/g, '+')
+            .replace(/_/g, '/');
+    
+        var rawData = window.atob(base64);
+        var outputArray = new Uint8Array(rawData.length);
+    
+        for (var i = 0; i < rawData.length; ++i) {
+            outputArray[i] = rawData.charCodeAt(i);
+        }
+        return outputArray;
+    }
+
+    function displayNotification() {
+        if (Notification.permission == 'granted') {
+          navigator.serviceWorker.getRegistration().then(function(reg) {
+            reg.showNotification('Test Notification');
+          });
+        }
+    }
+
+    navigator.serviceWorker.getRegistration().then(reg => {
+        const applicationServerKey = urlBase64ToUint8Array(applicationServerPublicKey);
+        reg.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: applicationServerKey
+        }).then(sub => {
+            var subJSObject = JSON.parse(JSON.stringify(sub));  
+            var endpoint = subJSObject.endpoint;  
+            var auth = subJSObject.keys.auth; 
+            var p256dh = subJSObject.keys.p256dh;
+            console.log(endpoint,auth,p256dh)
+        }).catch(function(e) {
+            if (Notification.permission === 'denied') {
+              console.warn('Permission for notifications was denied');
+            } else {
+              console.error('Unable to subscribe to push', e);
+            }
+          });
+    })
+
+    navigator.serviceWorker.ready.then(reg => {
+        reg.pushManager.getSubscription().then(sub => {
+            if(sub == undefined){
+                console.log('Not subscribed to push service!');
+            }else {
+                console.log('Subscription object: ', sub);
+            }
+        })
+    })
 
     let btnNotify = document.getElementById("btnNotif");
 
@@ -7,10 +61,11 @@
         Notification.requestPermission(function(status) {
             console.log('Notification permission status:', status);
             if (status === 'granted') {
-                navigator.serviceWorker.ready.then(function(registration) {
-                  registration.showNotification('Vibration Sample', {
+                navigator.serviceWorker.ready.then(function(reg) {
+                  reg.showNotification('Vibration Sample', {
                     body: 'Notification Triggered',
-                    vibrate: [200, 100, 200, 100, 200, 100, 200],
+                    vibrate: [200, 100, 200],
+                    data: {primaryKey: 1},
                     tag: 'vibration-sample'
                   });
                 });
@@ -18,14 +73,7 @@
         })
     });
 
-    function displayNotification() {
-        if (Notification.permission == 'granted') {
-          navigator.serviceWorker.getRegistration().then(function(reg) {
-            reg.showNotification('Hello world!');
-          });
-        }
-    }
-
+  
     let btnAdd = document.getElementById("btnAdd");
     const divInstall = document.getElementById('installContainer');
 
@@ -35,7 +83,7 @@
         window.deferredPrompt = e;
         divInstall.classList.toggle('hidden', false);
         console.log(window.deferredPrompt);
-        //btnAdd.style.display = 'block';
+        
     })
 
     btnAdd.addEventListener('click',async() =>{
@@ -56,7 +104,7 @@
 
     window.addEventListener('appinstalled',(evt) => {
         window.deferredPrompt = null;
-        console.log('a2hs installed');
+        console.log('App installed to Home Screen');
     })
 
     function registerServiceWorker(){
@@ -77,8 +125,7 @@
             })
 
         if ('Notification' in window && navigator.serviceWorker) {
-                // Display the UI to let the user toggle notifications
-                console.log("test")
+                console.log("Notification allowed")
             }
         }
     }
