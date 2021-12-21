@@ -131,7 +131,7 @@ navigator.serviceWorker.ready.then(()=>{
         }).then((sub)=>{
                 console.log(JSON.stringify(sub))
                 var data = fetch("https://rocky-everglades-32767.herokuapp.com/subscribe", {
-                    method: "POST", mode: 'no-cors',
+                    method: "POST",
                     body: JSON.stringify(sub),
                     headers: { "Access-Control-Allow-Origin":"*",
                                 "content-type": "text/plain"  }
