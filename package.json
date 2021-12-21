@@ -13,5 +13,7 @@
     "http-server": "^0.12.3",
     "urlb64touint8array": "^1.0.3"
   },
-  "devDependencies": {}
+  "devDependencies": {},
+  "proxy":"https://rocky-everglades-32767.herokuapp.com/",
+  "permissions": "https://rocky-everglades-32767.herokuapp.com/"
 }
