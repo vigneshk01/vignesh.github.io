@@ -131,10 +131,10 @@ navigator.serviceWorker.ready.then(()=>{
         }).then((sub)=>{
                 console.log(JSON.stringify(sub))
                 var data = fetch("https://rocky-everglades-32767.herokuapp.com/subscribe", {
-                    method: "POST", mode: 'cors',
+                    method: "POST", mode: 'no-cors',
                     body: JSON.stringify(sub),
                     headers: { "Access-Control-Allow-Origin":"*",
-                                "content-type": "application/json"  }
+                                "content-type": "text/plain"  }
                 })
                 console.log(data)
         }).catch(function(e) {
