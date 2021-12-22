@@ -126,16 +126,15 @@ navigator.serviceWorker.ready.then(()=>{
                 // var endpoint = subJSObject.endpoint;  
                 // var auth = subJSObject.keys.auth; 
                 // var p256dh = subJSObject.keys.p256dh;
-                console.log(JSON.stringify(sub))
+                console.log('subt',JSON.stringify(sub))
                 return(sub)
         }).then((sub)=>{
-                console.log(JSON.stringify(sub))
                 var data = fetch("https://rocky-everglades-32767.herokuapp.com/subscribe", {
-                    method: "POST",
+                    method: "POST", mode: "cors",
                     body: JSON.stringify(sub),
-                    headers: { "Access-Control-Allow-Origin":"*", "content-type": "text/plain"  }
+                    headers: { "Access-Control-Allow-Origin":"*", "content-type": "application/json"  }
                 })
-                console.log(data)
+                console.log('data',data)
         }).catch(function(e) {
                 if (Notification.permission === 'denied') {
                     console.warn('Permission for notifications was denied');
